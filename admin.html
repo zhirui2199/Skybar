@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Skybar Staff Dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <span>SKYBAR</span>
+      <span class="badge" data-i18n="adminTitle">Staff Dashboard</span>
+    </div>
+    <nav>
+      <a href="index.html" data-i18n="navRegister">Register</a>
+      <a href="index.html#member" data-i18n="navMember">Member Portal</a>
+      <a href="index.html#events" data-i18n="navEvents">Events</a>
+      <a href="index.html#benefits" data-i18n="navBenefits">Benefits</a>
+      <button type="button" data-lang-toggle><span data-lang-label>中文</span></button>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1 data-i18n="adminTitle">Staff Dashboard</h1>
+      <p data-i18n="adminSubtitle">View member profiles stored on this device.</p>
+    </section>
+    <section class="notice" data-storage-warning data-visible="false">
+      <h2 data-i18n="storageWarningTitle">Preview notice</h2>
+      <p data-i18n="storageWarningText">For full previews, open this site through a local web server so member data can be saved.</p>
+    </section>
+
+    <section class="card">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th data-i18n="labelName">Username</th>
+            <th data-i18n="labelPhone">Mobile phone number</th>
+            <th data-i18n="tierLabel">Membership tier</th>
+            <th data-i18n="pointsLabel">Reward points</th>
+            <th data-i18n="visitsLabel">Visits this month</th>
+          </tr>
+        </thead>
+        <tbody data-admin-table></tbody>
+      </table>
+      <p class="status" data-admin-empty data-i18n="adminEmpty">No members registered yet.</p>
+    </section>
+  </main>
+
+  <footer>
+    <p data-i18n="footerText">Skybar membership experience · Designed for mobile, tablet, and desktop.</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

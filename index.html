@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Skybar Membership</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <span>SKYBAR</span>
+      <span class="badge" data-i18n="heroCta">Start Membership</span>
+    </div>
+    <nav>
+      <a href="#register" data-i18n="navRegister">Register</a>
+      <a href="#member" data-i18n="navMember">Member Portal</a>
+      <a href="#events" data-i18n="navEvents">Events</a>
+      <a href="#benefits" data-i18n="navBenefits">Benefits</a>
+      <a href="admin.html" data-i18n="navAdmin">Staff Dashboard</a>
+      <button type="button" data-lang-toggle><span data-lang-label>中文</span></button>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1 data-i18n="heroTitle">Skybar Membership Experience</h1>
+      <p data-i18n="heroSubtitle">Join the skyline community, earn points, redeem exclusive perks, and stay updated on every rooftop event.</p>
+      <a class="primary" href="#register" data-i18n="heroCta">Start Membership</a>
+    </section>
+    <section class="notice" data-storage-warning data-visible="false">
+      <h2 data-i18n="storageWarningTitle">Preview notice</h2>
+      <p data-i18n="storageWarningText">For full previews, open this site through a local web server so member data can be saved.</p>
+    </section>
+
+    <section id="register" class="grid">
+      <div class="card">
+        <h2 data-i18n="registerTitle">Member Registration</h2>
+        <p data-i18n="registerSubtitle">Membership is stored securely in your browser and can be accessed any time.</p>
+        <form data-register-form>
+          <label>
+            <span data-i18n="labelName">Username</span>
+            <input name="name" type="text" data-i18n-placeholder="namePlaceholder" placeholder="Your nickname" required />
+          </label>
+          <label>
+            <span data-i18n="labelPhone">Mobile phone number</span>
+            <input name="phone" type="tel" data-i18n-placeholder="phonePlaceholder" placeholder="e.g. 13800001234" required />
+          </label>
+          <label>
+            <span data-i18n="labelPassword">Password</span>
+            <input name="password" type="password" data-i18n-placeholder="passwordPlaceholder" placeholder="At least 6 characters" required />
+          </label>
+          <label>
+            <span data-i18n="labelTier">Preferred tier</span>
+            <select name="tier">
+              <option data-i18n="tierStandard" value="tierStandard">City Lights</option>
+              <option data-i18n="tierPremium" value="tierPremium">Starlight Lounge</option>
+              <option data-i18n="tierElite" value="tierElite">Aurora Table</option>
+            </select>
+          </label>
+          <button class="primary" type="submit" data-i18n="registerButton">Create account</button>
+        </form>
+        <div class="status" data-register-status></div>
+      </div>
+
+      <div class="card" id="member">
+        <h2 data-i18n="memberTitle">Member Portal</h2>
+        <p data-i18n="memberSubtitle">Log in to view your points, reservations, and privileges.</p>
+        <form data-login-form>
+          <label>
+            <span data-i18n="labelPhone">Mobile phone number</span>
+            <input name="phone" type="tel" data-i18n-placeholder="phonePlaceholder" placeholder="e.g. 13800001234" required />
+          </label>
+          <label>
+            <span data-i18n="labelPassword">Password</span>
+            <input name="password" type="password" data-i18n-placeholder="passwordPlaceholder" placeholder="At least 6 characters" required />
+          </label>
+          <button class="primary" type="submit" data-i18n="loginButton">Sign in</button>
+        </form>
+        <div class="status error" data-login-status></div>
+
+        <div class="member-panel" data-member-panel>
+          <h3 data-member-name>Guest</h3>
+          <div class="member-stats">
+            <div class="stat">
+              <span data-i18n="pointsLabel">Reward points</span>
+              <strong data-member-points>0</strong>
+            </div>
+            <div class="stat">
+              <span data-i18n="tierLabel">Membership tier</span>
+              <strong data-member-tier>-</strong>
+            </div>
+            <div class="stat">
+              <span data-i18n="visitsLabel">Visits this month</span>
+              <strong data-member-visits>0</strong>
+            </div>
+            <div class="stat">
+              <span data-i18n="nextEventLabel">Next event</span>
+              <strong data-member-event>-</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="card">
+        <h2 data-i18n="redeemTitle">Points Redemption</h2>
+        <p data-i18n="redeemSubtitle">Swap points for curated skyline perks.</p>
+        <div class="grid" data-perks></div>
+        <div class="status" data-redeem-status></div>
+      </div>
+      <div class="card" id="events">
+        <h2 data-i18n="eventsTitle">Upcoming Events</h2>
+        <p data-i18n="eventsSubtitle">Plan your nights with live DJ sets, cocktail labs, and sunset yoga.</p>
+        <div class="grid" data-events></div>
+      </div>
+    </section>
+
+    <section id="benefits" class="card">
+      <h2 data-i18n="benefitsTitle">More Skybar Features</h2>
+      <p data-i18n="benefitsSubtitle">Explore extra functions crafted for members.</p>
+      <div class="grid">
+        <div class="card">
+          <h3 data-i18n="featureOneTitle">Smart reservation</h3>
+          <p data-i18n="featureOneText">Book skyline seats with real-time availability and table preferences.</p>
+        </div>
+        <div class="card">
+          <h3 data-i18n="featureTwoTitle">Private mixology notes</h3>
+          <p data-i18n="featureTwoText">Save your favorite cocktails and request them instantly.</p>
+        </div>
+        <div class="card">
+          <h3 data-i18n="featureThreeTitle">VIP check-in</h3>
+          <p data-i18n="featureThreeText">Use QR check-in for fast entry on event nights.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p data-i18n="footerText">Skybar membership experience · Designed for mobile, tablet, and desktop.</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
