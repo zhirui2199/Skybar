@@ -19,6 +19,7 @@ const translations = {
     tierElite: "Aurora Table",
     registerButton: "Create account",
     registerSuccess: "Registration successful. Your account is ready.",
+    registerUpdate: "Account updated successfully.",
     registerError: "Please complete all fields. Phone number must be at least 8 digits.",
     memberTitle: "Member Portal",
     memberSubtitle: "Log in to view your points, reservations, and privileges.",
@@ -46,6 +47,8 @@ const translations = {
     adminTitle: "Staff Dashboard",
     adminSubtitle: "View member profiles stored on this device.",
     adminEmpty: "No members registered yet.",
+    storageWarningTitle: "Preview notice",
+    storageWarningText: "For full previews, open this site through a local web server so member data can be saved.",
     footerText: "Skybar membership experience · Designed for mobile, tablet, and desktop.",
     phonePlaceholder: "e.g. 13800001234",
     passwordPlaceholder: "At least 6 characters",
@@ -71,6 +74,7 @@ const translations = {
     tierElite: "极光专席",
     registerButton: "创建账号",
     registerSuccess: "注册成功，账号已保存。",
+    registerUpdate: "账号信息已更新。",
     registerError: "请填写完整信息，手机号至少 8 位。",
     memberTitle: "会员中心",
     memberSubtitle: "登录查看积分、预约与专属礼遇。",
@@ -98,6 +102,8 @@ const translations = {
     adminTitle: "后台管理",
     adminSubtitle: "查看本设备已注册的会员。",
     adminEmpty: "暂无会员资料。",
+    storageWarningTitle: "预览提示",
+    storageWarningText: "请通过本地服务器预览网站，以确保会员数据可以正常保存。",
     footerText: "Skybar 会员体验 · 适配手机、平板与桌面浏览。",
     phonePlaceholder: "例如 13800001234",
     passwordPlaceholder: "至少 6 位字符",
@@ -131,11 +137,34 @@ const events = [
 
 const languageToggle = document.querySelector("[data-lang-toggle]");
 const languageLabel = document.querySelector("[data-lang-label]");
-let currentLang = localStorage.getItem("skybar_lang") || (navigator.language.startsWith("zh") ? "zh" : "en");
+const storageWarning = document.querySelector("[data-storage-warning]");
+
+const storage = (() => {
+  try {
+    const testKey = "__skybar_test__";
+    localStorage.setItem(testKey, "1");
+    localStorage.removeItem(testKey);
+    return {
+      available: true,
+      getItem: (key) => localStorage.getItem(key),
+      setItem: (key, value) => localStorage.setItem(key, value)
+    };
+  } catch (error) {
+    const memoryStore = {};
+    return {
+      available: false,
+      getItem: (key) => (key in memoryStore ? memoryStore[key] : null),
+      setItem: (key, value) => {
+        memoryStore[key] = value;
+      }
+    };
+  }
+})();
+let currentLang = storage.getItem("skybar_lang") || (navigator.language.startsWith("zh") ? "zh" : "en");
 
 const applyTranslations = (lang) => {
   currentLang = lang;
-  localStorage.setItem("skybar_lang", lang);
+  storage.setItem("skybar_lang", lang);
   const strings = translations[lang];
 
   document.querySelectorAll("[data-i18n]").forEach((el) => {
@@ -156,17 +185,21 @@ const applyTranslations = (lang) => {
     languageLabel.textContent = lang === "zh" ? "EN" : "中文";
   }
 
+  if (storageWarning) {
+    storageWarning.dataset.visible = storage.available ? "false" : "true";
+  }
+
   renderEvents();
   renderPerks();
 };
 
 const getMembers = () => {
-  const raw = localStorage.getItem("skybar_members");
+  const raw = storage.getItem("skybar_members");
   return raw ? JSON.parse(raw) : [];
 };
 
 const saveMembers = (members) => {
-  localStorage.setItem("skybar_members", JSON.stringify(members));
+  storage.setItem("skybar_members", JSON.stringify(members));
 };
 
 const registerForm = document.querySelector("[data-register-form]");
@@ -189,7 +222,12 @@ if (registerForm) {
 
     const members = getMembers();
     const existing = members.find((member) => member.phone === phone);
-    if (!existing) {
+    if (existing) {
+      existing.name = name;
+      existing.password = password;
+      existing.tier = tier;
+      registerStatus.textContent = translations[currentLang].registerUpdate;
+    } else {
       const newMember = {
         id: `MBR-${Date.now()}`,
         name,
@@ -198,13 +236,12 @@ if (registerForm) {
         tier,
         points: 420,
         visits: 3,
-        nextEvent: events[0].title[currentLang]
+        nextEventIndex: 0
       };
       members.push(newMember);
-      saveMembers(members);
+      registerStatus.textContent = translations[currentLang].registerSuccess;
     }
-
-    registerStatus.textContent = translations[currentLang].registerSuccess;
+    saveMembers(members);
     registerStatus.classList.remove("error");
     registerForm.reset();
   });
@@ -213,14 +250,17 @@ if (registerForm) {
 const loginForm = document.querySelector("[data-login-form]");
 const loginStatus = document.querySelector("[data-login-status]");
 const memberPanel = document.querySelector("[data-member-panel]");
+let activeMemberId = null;
 
 const updateMemberPanel = (member) => {
   if (!memberPanel) return;
   memberPanel.querySelector("[data-member-name]").textContent = member.name;
   memberPanel.querySelector("[data-member-points]").textContent = member.points;
-  memberPanel.querySelector("[data-member-tier]").textContent = member.tier;
+  memberPanel.querySelector("[data-member-tier]").textContent = translations[currentLang][member.tier] || member.tier;
   memberPanel.querySelector("[data-member-visits]").textContent = member.visits;
-  memberPanel.querySelector("[data-member-event]").textContent = member.nextEvent;
+  const eventLabel =
+    events[member.nextEventIndex]?.title[currentLang] || member.nextEvent || "-";
+  memberPanel.querySelector("[data-member-event]").textContent = eventLabel;
   memberPanel.dataset.visible = "true";
 };
 
@@ -241,6 +281,7 @@ if (loginForm) {
 
     loginStatus.textContent = "";
     loginStatus.classList.remove("error");
+    activeMemberId = member.id;
     updateMemberPanel(member);
     loginForm.reset();
   });
@@ -271,8 +312,7 @@ if (perksContainer) {
     const perkId = button.dataset.perkId;
     const perk = perks.find((item) => item.id === perkId);
     const members = getMembers();
-    const activeName = memberPanel?.querySelector("[data-member-name]")?.textContent;
-    const member = members.find((item) => item.name === activeName);
+    const member = members.find((item) => item.id === activeMemberId);
 
     if (!member || member.points < perk.cost) {
       redeemStatus.textContent = translations[currentLang].redeemError;
@@ -319,11 +359,12 @@ const renderAdmin = () => {
   adminEmpty.style.display = "none";
   members.forEach((member) => {
     const row = document.createElement("tr");
+    const tierLabel = translations[currentLang][member.tier] || member.tier;
     row.innerHTML = `
       <td>${member.id}</td>
       <td>${member.name}</td>
       <td>${member.phone}</td>
-      <td>${member.tier}</td>
+      <td>${tierLabel}</td>
       <td>${member.points}</td>
       <td>${member.visits}</td>
     `;

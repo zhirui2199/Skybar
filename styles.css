@@ -115,6 +115,20 @@ main {
   gap: 12px;
 }
 
+.notice {
+  display: none;
+  padding: 16px 20px;
+  border-radius: 16px;
+  background: rgba(240, 139, 42, 0.12);
+  border: 1px solid rgba(240, 139, 42, 0.4);
+  color: var(--text);
+  gap: 8px;
+}
+
+.notice[data-visible="true"] {
+  display: grid;
+}
+
 .card h3 {
   font-size: 1.1rem;
 }
